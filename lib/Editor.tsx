@@ -24,7 +24,11 @@ export const Editor = ({
       getSelection() {
         return window.getSelection()?.toString() ?? "";
       },
-      insertIntoCursor(text: string, selection: string = "") {
+      insertIntoCursor(
+        text: string,
+        selection: string = "",
+        breakLine: boolean = false
+      ) {
         const textarea = textareaRef.current;
 
         if (!textarea) return;
@@ -42,8 +46,13 @@ export const Editor = ({
           textarea.value.length
         );
 
-        textarea.value =
-          textBeforeCursorPosition + text + textAfterCursorPosition;
+        let value = `${textBeforeCursorPosition}${text}${textAfterCursorPosition}`;
+        if (breakLine) {
+          value += `\r\n`;
+        }
+
+        textarea.value = value;
+
         textarea.focus();
       },
     }),
@@ -86,7 +95,7 @@ Editor.H1Control = function H1Control({
   function handleClick(e: MouseEvent<HTMLButtonElement>) {
     onClick?.(e);
     const selection = getSelection();
-    insertIntoCursor(`# ${selection || "h1-goes-here"}`);
+    insertIntoCursor(`# ${selection || "h1-goes-here"}`, selection, true);
   }
 
   return (
@@ -106,7 +115,7 @@ Editor.H2Control = function H2Control({
   function handleClick(e: MouseEvent<HTMLButtonElement>) {
     onClick?.(e);
     const selection = getSelection();
-    insertIntoCursor(`## ${selection || "h2-goes-here"}`);
+    insertIntoCursor(`## ${selection || "h2-goes-here"}`, selection, true);
   }
 
   return (
@@ -126,7 +135,7 @@ Editor.H3Control = function H3Control({
   function handleClick(e: MouseEvent<HTMLButtonElement>) {
     onClick?.(e);
     const selection = getSelection();
-    insertIntoCursor(`### ${selection || "h3-goes-here"}`);
+    insertIntoCursor(`### ${selection || "h3-goes-here"}`, selection, true);
   }
 
   return (
@@ -136,40 +145,63 @@ Editor.H3Control = function H3Control({
   );
 };
 
-Editor.LinkControl = function LinkControl() {
+Editor.LinkControl = function LinkControl({
+  children,
+  onClick,
+  ...delegated
+}: ControlProps) {
   const { getSelection, insertIntoCursor } = useEditorContext();
 
-  function handleClick() {
+  function handleClick(e: MouseEvent<HTMLButtonElement>) {
+    onClick?.(e);
     const selection = getSelection();
     insertIntoCursor(
-      `[${selection || "link-text-goes-here"}](link-url-goes-here)`
+      `[${selection || "link-text-goes-here"}](link-url-goes-here)`,
+      selection
     );
   }
 
-  return <Editor.Control onClick={handleClick}>Link</Editor.Control>;
+  return (
+    <Editor.Control onClick={handleClick} {...delegated}>
+      {children || "Link"}
+    </Editor.Control>
+  );
 };
 
-Editor.QuoteControl = function QuoteControl() {
+Editor.QuoteControl = function QuoteControl({
+  children,
+  onClick,
+  ...delegated
+}: ControlProps) {
   const { getSelection, insertIntoCursor } = useEditorContext();
 
-  function handleClick() {
+  function handleClick(e: MouseEvent<HTMLButtonElement>) {
+    onClick?.(e);
     const selection = getSelection();
-    insertIntoCursor(`> ${selection || "quote-goes-here"}`);
+    insertIntoCursor(`> ${selection || "quote-goes-here"}`, selection);
   }
 
-  return <Editor.Control onClick={handleClick}>Quote</Editor.Control>;
+  return (
+    <Editor.Control onClick={handleClick} {...delegated}>
+      {children || "Quote"}
+    </Editor.Control>
+  );
 };
 
 Editor.ImageControl = function ImageControl({
+  children,
   uploader,
+  onClick,
+  ...delegated
 }: {
   uploader: (file: File) => Promise<string>;
-}) {
+} & ControlProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { getSelection, insertIntoCursor } = useEditorContext();
 
-  function handleClick() {
+  function handleClick(e: MouseEvent<HTMLButtonElement>) {
+    onClick?.(e);
     inputRef.current?.click();
   }
 
@@ -182,7 +214,10 @@ Editor.ImageControl = function ImageControl({
       if (!url) return;
 
       const selection = getSelection();
-      insertIntoCursor(`[${selection || "image-alt-text"}](${url} "caption")`);
+      insertIntoCursor(
+        `[${selection || "image-alt-text"}](${url} "caption")`,
+        selection
+      );
     } catch (error) {
       console.error(error);
     }
@@ -190,12 +225,14 @@ Editor.ImageControl = function ImageControl({
 
   return (
     <>
-      <Editor.Control onClick={handleClick}>Image</Editor.Control>
+      <Editor.Control onClick={handleClick} {...delegated}>
+        {children || "Image"}
+      </Editor.Control>
       <input
         ref={inputRef}
         type="file"
         accept="image/*"
-        className="hidden"
+        style={{ display: "none" }}
         onChange={handleFile}
       />
     </>
