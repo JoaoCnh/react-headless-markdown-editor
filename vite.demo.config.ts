@@ -6,5 +6,6 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: "demo",
+    assetsDir: "react-headless-markdown-editor/assets",
   },
 });
