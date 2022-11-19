@@ -1,5 +1,22 @@
 {
   "name": "react-headless-markdown-editor",
+  "description": "A React component for simple, customisable markdown editors.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoaoCnh/react-headless-markdown-editor.git"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "markdown",
+    "markdown editor"
+  ],
+  "author": "João Cunha <https://github.com/JoaoCnh>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JoaoCnh/react-headless-markdown-editor/issues"
+  },
+  "homepage": "https://joaocnh.github.io/react-headless-markdown-editor/",
   "version": "1.1.0",
   "type": "module",
   "files": [
