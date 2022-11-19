@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-interface IEditorContext {
+export interface IEditorContext {
   getSelection: () => string;
   insertIntoCursor: (
     text: string,

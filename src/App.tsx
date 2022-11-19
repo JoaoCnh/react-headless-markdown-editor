@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Editor } from "../lib/main";
+import { Editor } from "../dist";
 
 const controlClx =
   "inline-block p-4 text-mindera-600 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-mindera-500";

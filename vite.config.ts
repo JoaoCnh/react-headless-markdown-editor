@@ -1,17 +1,23 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import dts from "vite-plugin-dts";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    dts({
+      include: ["lib"],
+    }),
+  ],
   build: {
     minify: true,
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: "lib/main.ts",
-      name: "ReactHeadlessMarkdownEditor",
+      entry: "lib/index.ts",
+      name: "react-headless-markdown-editor",
       // the proper extensions will be added
-      fileName: "react-headless-markdown-editor",
+      fileName: "index",
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
